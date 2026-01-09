@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>公考成语刷题</title>
+    
+    <script src="data.js"></script>
+
+    <style>
+        /* CSS样式：决定长什么样 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f5f5f7;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            color: #333;
+        }
+        .header {
+            padding: 15px;
+            text-align: center;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+        /* 卡片样式 */
+        .card-container {
+            width: 100%;
+            max-width: 350px;
+            height: 450px;
+            perspective: 1000px; /* 3D透视效果 */
+            cursor: pointer;
+        }
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden; /* 背面不可见 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            border-radius: 20px;
+        }
+        /* 卡片正面 */
+        .card-front {
+            background-color: #fff;
+        }
+        .term {
+            font-size: 36px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .hint {
+            font-size: 14px;
+            color: #999;
+            margin-top: 20px;
+        }
+        /* 卡片背面 */
+        .card-back {
+            background-color: #fafafa;
+            transform: rotateY(180deg);
+            align-items: flex-start; /* 左对齐 */
+            overflow-y: auto; /* 内容多了可以滚动 */
+            justify-content: flex-start;
+        }
+        .group-tag {
+            background: #e1f5fe;
+            color: #0288d1;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+        .label {
+            font-weight: bold;
+            color: #333;
+            margin-top: 10px;
+            font-size: 15px;
+        }
+        .content {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .example-list {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #666;
+            padding-left: 0;
+        }
+        .example-item {
+            margin-bottom: 8px;
+            list-style: none;
+            padding-left: 10px;
+            border-left: 3px solid #007aff;
+        }
+
+        /* 底部控制栏 */
+        .controls {
+            padding: 20px;
+            width: 100%;
+            max-width: 350px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        button {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,122,255,0.3);
+            active: scale(0.95);
+        }
+        button:disabled {
+            background: #ccc;
+            box-shadow: none;
+        }
+        .progress {
+            font-size: 14px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">公考成语 800 词</div>
+
+    <div class="container">
+        <div class="card-container" onclick="flipCard()">
+            <div class="card" id="flashcard">
+                <div class="card-face card-front">
+                    <div class="term" id="term-text">...</div>
+                    <div class="hint">点击查看释义</div>
+                </div>
+                <div class="card-face card-back">
+                    <div class="group-tag" id="group-text">...</div>
+                    <div class="label">【解释】</div>
+                    <div class="content" id="def-text">...</div>
+                    <div class="label">【真题例句】</div>
+                    <div class="example-list" id="ex-list">
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevCard()" id="btn-prev">上一个</button>
+        <div class="progress" id="progress-text">1 / 10</div>
+        <button onclick="nextCard()" id="btn-next">下一个</button>
+    </div>
+
+    <script>
+        // --- 数据区域开始 ---
+        
+        // 【关键修改点 2】直接引用 external 文件的变量，不再手动粘贴数据
+        const idioms = window.idioms; 
+
+        // 安全检查：防止因为没找到 data.js 而白屏
+        if (!idioms) {
+            alert("错误：未找到数据！请确保文件夹里有一个名为 data.js 的文件，且内容以 window.idioms = [...] 开头。");
+        }
+        
+        // --- 数据区域结束 ---
+
+        let currentIndex = 0;
+        const card = document.getElementById('flashcard');
+        
+        // 初始化
+        function renderCard() {
+            if (!idioms || idioms.length === 0) return;
+
+            const data = idioms[currentIndex];
+            
+            // 填充正面
+            document.getElementById('term-text').innerText = data.term;
+            
+            // 填充背面
+            document.getElementById('group-text').innerText = data.group;
+            document.getElementById('def-text').innerText = data.definition;
+            
+            // 填充例句
+            const exList = document.getElementById('ex-list');
+            exList.innerHTML = ''; // 清空旧的
+            if (data.examples && data.examples.length > 0) {
+                data.examples.forEach(ex => {
+                    const li = document.createElement('div');
+                    li.className = 'example-item';
+                    li.innerText = ex;
+                    exList.appendChild(li);
+                });
+            } else {
+                exList.innerHTML = '<div style="color:#999;font-style:italic">暂无例句</div>';
+            }
+
+            // 更新进度
+            document.getElementById('progress-text').innerText = `${currentIndex + 1} / ${idioms.length}`;
+            
+            // 重置翻转状态（每次换词都显示正面）
+            card.classList.remove('is-flipped');
+            
+            // 按钮状态
+            document.getElementById('btn-prev').disabled = currentIndex === 0;
+            document.getElementById('btn-next').disabled = currentIndex === idioms.length - 1;
+        }
+
+        // 翻转
+        function flipCard() {
+            card.classList.toggle('is-flipped');
+        }
+
+        // 下一个
+        function nextCard() {
+            if (idioms && currentIndex < idioms.length - 1) {
+                currentIndex++;
+                renderCard();
+            }
+        }
+
+        // 上一个
+        function prevCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderCard();
+            }
+        }
+
+        // 绑定点击事件阻止冒泡（防止点击按钮时翻牌）
+        document.querySelector('.controls').addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        // 启动
+        renderCard();
+
+    </script>
+</body>
+</html>
