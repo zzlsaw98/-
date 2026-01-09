@@ -16,9 +16,9 @@
             flex-direction: column;
             height: 100vh;
             color: #333;
+            overflow: hidden;
         }
 
-        /* 顶部导航栏：增加了分组选择 */
         .header {
             padding: 10px 15px;
             background: #fff;
@@ -28,20 +28,15 @@
             align-items: center;
             z-index: 100;
         }
-        .app-title {
-            font-weight: bold;
-            font-size: 16px;
-        }
+
         select {
-            padding: 5px 10px;
+            padding: 8px;
             border-radius: 8px;
             border: 1px solid #ddd;
             font-size: 14px;
             background: #f9f9f9;
-            max-width: 150px;
         }
 
-        /* 主容器 */
         .container {
             flex: 1;
             display: flex;
@@ -49,25 +44,19 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-            overflow: hidden;
-            position: relative;
         }
 
-        /* 状态提示 */
         .status-bar {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             font-size: 14px;
-            color: #666;
-            background: rgba(255,255,255,0.8);
-            padding: 5px 15px;
-            border-radius: 20px;
+            color: #888;
         }
 
-        /* 卡片容器 */
+        /* 卡片 */
         .card-container {
             width: 100%;
             max-width: 350px;
-            height: 480px; /* 稍微调高一点以容纳内容 */
+            height: 480px;
             perspective: 1000px;
             cursor: pointer;
         }
@@ -75,11 +64,8 @@
             width: 100%;
             height: 100%;
             position: relative;
-            transition: transform 0.5s;
+            transition: transform 0.6s;
             transform-style: preserve-3d;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         .card.is-flipped {
             transform: rotateY(180deg);
@@ -91,359 +77,222 @@
             backface-visibility: hidden;
             display: flex;
             flex-direction: column;
-            padding: 25px;
+            padding: 30px;
             box-sizing: border-box;
-            border-radius: 20px;
+            border-radius: 25px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
         }
         
-        /* 正面布局 */
+        /* 正面样式：显示分组和成语 */
         .card-front {
-            background-color: #fff;
             justify-content: center;
             align-items: center;
         }
+        .front-group {
+            position: absolute;
+            top: 30px;
+            background: #f0f0f0;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 14px;
+            color: #666;
+        }
         .term {
-            font-size: 38px;
+            font-size: 40px;
             font-weight: bold;
             color: #2c3e50;
-            margin-bottom: 15px;
-            text-align: center;
         }
         .hint {
-            font-size: 14px;
-            color: #999;
-            margin-top: 20px;
-            background: #f0f0f0;
-            padding: 5px 12px;
-            border-radius: 15px;
+            position: absolute;
+            bottom: 40px;
+            font-size: 13px;
+            color: #bbb;
         }
 
-        /* 背面布局 */
+        /* 背面样式 */
         .card-back {
-            background-color: #fafafa;
             transform: rotateY(180deg);
             overflow-y: auto;
-            align-items: flex-start;
-        }
-        .group-tag {
-            background: #e1f5fe;
-            color: #0288d1;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            margin-bottom: 10px;
-            align-self: flex-start;
+            text-align: left;
         }
         .label {
             font-weight: bold;
-            color: #333;
-            margin-top: 12px;
-            font-size: 15px;
-            border-left: 4px solid #007aff;
-            padding-left: 8px;
+            margin-top: 15px;
+            color: #007aff;
+            font-size: 14px;
         }
         .content {
-            font-size: 15px;
+            font-size: 16px;
             line-height: 1.6;
-            color: #444;
-            margin: 5px 0 10px 0;
-            text-align: justify;
-        }
-        .example-list {
-            font-size: 14px;
-            color: #666;
-            width: 100%;
+            margin: 8px 0;
         }
         .example-item {
+            font-size: 14px;
+            color: #666;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 10px;
             margin-bottom: 8px;
-            padding: 8px;
-            background: #fff;
-            border-radius: 8px;
-            border: 1px solid #eee;
         }
 
-        /* 底部控制栏 - 只有在翻面后才显示按钮 */
+        /* 底部控制栏：左掌握，右模糊 */
         .controls {
             padding: 20px;
             width: 100%;
-            max-width: 350px;
+            max-width: 400px;
             display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            opacity: 0; /* 默认隐藏 */
-            pointer-events: none; /* 隐藏时不可点 */
-            transition: opacity 0.3s;
+            justify-content: space-around;
+            gap: 20px;
+            visibility: hidden; /* 默认隐藏，翻面后显示 */
         }
         .controls.visible {
-            opacity: 1;
-            pointer-events: auto;
+            visibility: visible;
         }
 
         .btn {
             flex: 1;
-            padding: 14px 0;
+            padding: 15px;
             border: none;
-            border-radius: 50px;
-            font-size: 16px;
+            border-radius: 15px;
+            font-size: 18px;
             font-weight: bold;
             color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             cursor: pointer;
-            text-align: center;
+            transition: transform 0.1s;
         }
-        .btn-fuzzy {
-            background: #ff9500; /* 橙色 - 模糊 */
-        }
-        .btn-master {
-            background: #34c759; /* 绿色 - 掌握 */
-        }
-        .btn:active {
-            transform: scale(0.96);
-        }
+        .btn:active { transform: scale(0.95); }
 
-        /* 完成时的提示 */
+        .btn-master { background-color: #34c759; } /* 左侧绿色 */
+        .btn-fuzzy { background-color: #ff9500; }   /* 右侧橙色 */
+
         .empty-state {
             display: none;
             text-align: center;
-            color: #888;
-        }
-        .empty-state h3 {
-            color: #333;
         }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="app-title">公考成语</div>
-        <select id="group-select" onchange="changeGroup()">
-            <option value="">加载中...</option>
-        </select>
+        <div style="font-weight: bold;">成语刷题</div>
+        <select id="group-select" onchange="initProgress()"></select>
     </div>
 
     <div class="container">
-        <div class="status-bar" id="progress-text">本组剩余: 0</div>
+        <div class="status-bar" id="status-text">加载中...</div>
 
         <div class="card-container" onclick="flipCard()">
             <div class="card" id="flashcard">
                 <div class="card-face card-front">
+                    <div class="front-group" id="front-group-label">分组加载中</div>
                     <div class="term" id="term-text">...</div>
-                    <div class="hint">点击查看释义</div>
+                    <div class="hint">点击翻转查看释义</div>
                 </div>
                 <div class="card-face card-back">
-                    <div class="group-tag" id="group-text">...</div>
-                    
-                    <div class="label">【解释】</div>
+                    <div class="label">【释义】</div>
                     <div class="content" id="def-text">...</div>
-                    
                     <div class="label">【真题例句】</div>
-                    <div class="example-list" id="ex-list"></div>
+                    <div id="ex-list"></div>
                 </div>
             </div>
         </div>
 
         <div class="empty-state" id="empty-msg">
-            <h3>🎉 太棒了！</h3>
-            <p>这一组的成语你已经全部掌握了。</p>
-            <button class="btn btn-fuzzy" onclick="resetGroup()" style="width:200px; margin-top:20px;">重置本组进度</button>
+            <h2>🎉 本组已斩完！</h2>
+            <button onclick="resetCurrentGroup()" style="padding: 10px 20px; border-radius: 10px; border:none; background:#007aff; color:white;">重置本组</button>
         </div>
     </div>
 
     <div class="controls" id="control-bar">
-        <button class="btn btn-fuzzy" onclick="markFuzzy()">
-            😵 模糊<br><span style="font-size:12px;opacity:0.8">保留复习</span>
-        </button>
-        <button class="btn btn-master" onclick="markMastered()">
-            😎 掌握<br><span style="font-size:12px;opacity:0.8">移入已斩</span>
-        </button>
+        <button class="btn btn-master" onclick="handleAction('master')">掌握</button>
+        <button class="btn btn-fuzzy" onclick="handleAction('fuzzy')">模糊</button>
     </div>
 
     <script>
-        // --- 1. 数据准备 ---
-        const allIdioms = window.idioms || [];
-        
-        // 从 localStorage 读取已掌握的成语列表 (存的是成语名称)
-        let masteredSet = new Set(JSON.parse(localStorage.getItem('mastered_idioms') || '[]'));
-        
-        // 当前状态变量
-        let currentGroup = "";
-        let todoList = []; // 当前组里还没掌握的词
-        let currentCardIndex = 0; // 当前显示的是 todoList 里的第几个
+        let currentIdioms = []; // 当前学习队列
+        let masteredList = JSON.parse(localStorage.getItem('mastered_idioms') || '[]');
 
-        // --- 2. 初始化逻辑 ---
-        window.onload = function() {
-            if (allIdioms.length === 0) {
-                alert("未读取到数据，请检查 data.js");
-                return;
-            }
-            initGroupSelect();
-        };
-
-        // 初始化下拉菜单
-        function initGroupSelect() {
+        // 初始化：提取全部分组
+        function init() {
+            const groups = [...new Set(window.idioms.map(i => i.group))];
             const select = document.getElementById('group-select');
-            select.innerHTML = "";
-            
-            // 提取所有不重复的组名
-            const groups = [...new Set(allIdioms.map(item => item.group))];
-            
-            groups.forEach((g, index) => {
-                const option = document.createElement('option');
-                option.value = g;
-                option.text = g;
-                select.appendChild(option);
+            groups.forEach(g => {
+                const opt = document.createElement('option');
+                opt.value = g; opt.text = g;
+                select.appendChild(opt);
             });
-
-            // 默认选中第一组，或者上次选中的组
-            const lastGroup = localStorage.getItem('last_selected_group');
-            if (lastGroup && groups.includes(lastGroup)) {
-                select.value = lastGroup;
-            } else {
-                select.value = groups[0];
-            }
-
-            changeGroup(); // 加载该组数据
+            initProgress();
         }
 
-        // --- 3. 核心逻辑：切换分组 ---
-        function changeGroup() {
-            const select = document.getElementById('group-select');
-            currentGroup = select.value;
-            localStorage.setItem('last_selected_group', currentGroup); // 记住选择
-
-            // 过滤数据：属于当前组 AND 不在已掌握列表里
-            todoList = allIdioms.filter(item => {
-                return item.group === currentGroup && !masteredSet.has(item.term);
-            });
-
-            // 如果这一组有词，打乱顺序（可选，这里暂不打乱，按顺序来）
-            // todoList.sort(() => Math.random() - 0.5); 
-
-            currentCardIndex = 0;
+        // 切换分组或重置
+        function initProgress() {
+            const groupName = document.getElementById('group-select').value;
+            // 筛选当前组中未掌握的词
+            currentIdioms = window.idioms.filter(i => i.group === groupName && !masteredList.includes(i.term));
             renderCard();
         }
 
-        // --- 4. 渲染卡片 ---
         function renderCard() {
             const card = document.getElementById('flashcard');
-            const controls = document.getElementById('control-bar');
-            const cardContainer = document.querySelector('.card-container');
+            const controlBar = document.getElementById('control-bar');
             const emptyMsg = document.getElementById('empty-msg');
+            const cardBox = document.querySelector('.card-container');
 
-            // 恢复卡片正面状态
             card.classList.remove('is-flipped');
-            controls.classList.remove('visible'); // 隐藏按钮
+            controlBar.classList.remove('visible');
 
-            // 检查该组是否已学完
-            if (todoList.length === 0) {
-                cardContainer.style.display = 'none';
+            if (currentIdioms.length === 0) {
+                cardBox.style.display = 'none';
                 emptyMsg.style.display = 'block';
-                document.getElementById('progress-text').innerText = `本组剩余: 0`;
+                document.getElementById('status-text').innerText = "学习完成";
                 return;
             }
 
-            // 显示卡片区域
-            cardContainer.style.display = 'block';
+            cardBox.style.display = 'block';
             emptyMsg.style.display = 'none';
-
-            // 防止数组越界（循环显示）
-            if (currentCardIndex >= todoList.length) {
-                currentCardIndex = 0;
-            }
-
-            const data = todoList[currentCardIndex];
             
-            // 填充内容
+            const data = currentIdioms[0]; // 永远取队列第一个
             document.getElementById('term-text').innerText = data.term;
-            document.getElementById('group-text').innerText = data.group;
+            document.getElementById('front-group-label').innerText = data.group;
             document.getElementById('def-text').innerText = data.definition;
-            
+            document.getElementById('status-text').innerText = `本组剩余：${currentIdioms.length} 个`;
+
             const exList = document.getElementById('ex-list');
-            exList.innerHTML = '';
-            if (data.examples && data.examples.length > 0) {
-                data.examples.forEach(ex => {
-                    const div = document.createElement('div');
-                    div.className = 'example-item';
-                    div.innerText = ex;
-                    exList.appendChild(div);
-                });
-            } else {
-                exList.innerHTML = '<div style="padding:10px;color:#999">暂无例句</div>';
-            }
-
-            // 更新顶部进度
-            document.getElementById('progress-text').innerText = `本组剩余: ${todoList.length} (总进度: ${masteredSet.size} 已斩)`;
+            exList.innerHTML = data.examples.map(ex => `<div class="example-item">${ex}</div>`).join('');
         }
 
-        // --- 5. 交互操作 ---
-
-        // 翻转卡片
         function flipCard() {
-            const card = document.getElementById('flashcard');
-            const controls = document.getElementById('control-bar');
-            
-            // 只有在正面的时候点击才翻转并显示按钮
-            if (!card.classList.contains('is-flipped')) {
-                card.classList.add('is-flipped');
-                controls.classList.add('visible');
-            }
+            document.getElementById('flashcard').classList.toggle('is-flipped');
+            document.getElementById('control-bar').classList.add('visible');
         }
 
-        // 点击“模糊” (保留在列表中，切换到下一个)
-        function markFuzzy() {
-            // 阻止冒泡防止再次触发翻牌（虽然按钮在卡片外，但为了保险）
-            event.stopPropagation(); 
-            
-            // 简单的逻辑：移到下一个。如果想“惩罚”，可以把它放到数组末尾，这里暂时只是切下一张
-            currentCardIndex++;
-            renderCard();
-        }
-
-        // 点击“掌握” (移出列表)
-        function markMastered() {
+        // 处理点击
+        function handleAction(type) {
             event.stopPropagation();
-            
-            const data = todoList[currentCardIndex];
-            
-            // 1. 加入已掌握集合
-            masteredSet.add(data.term);
-            
-            // 2. 保存到本地存储
-            localStorage.setItem('mastered_idioms', JSON.stringify([...masteredSet]));
+            const word = currentIdioms.shift(); // 取出当前词
 
-            // 3. 从当前待办列表中移除
-            todoList.splice(currentCardIndex, 1);
-
-            // 4. 渲染下一张 (因为当前被删了，index不需要变，除非本来就是最后一张)
-            if (currentCardIndex >= todoList.length) {
-                currentCardIndex = 0;
+            if (type === 'master') {
+                // 掌握：存入本地并移除
+                masteredList.push(word.term);
+                localStorage.setItem('mastered_idioms', JSON.stringify(masteredList));
+            } else {
+                // 模糊：放回队列末尾，循环出现
+                currentIdioms.push(word);
             }
             
             renderCard();
         }
 
-        // 重置本组进度（用于全部学完后的后悔药）
-        function resetGroup() {
-            if(!confirm("确定要重置这一组的学习进度吗？之前的‘掌握’记录会被清除。")) return;
-
-            // 找出当前组的所有词
-            const groupTerms = allIdioms.filter(i => i.group === currentGroup).map(i => i.term);
-            
-            // 从 masteredSet 中移除这些词
-            groupTerms.forEach(term => masteredSet.delete(term));
-            
-            // 更新本地存储
-            localStorage.setItem('mastered_idioms', JSON.stringify([...masteredSet]));
-            
-            // 重新加载
-            changeGroup();
+        function resetCurrentGroup() {
+            const groupName = document.getElementById('group-select').value;
+            const termsInGroup = window.idioms.filter(i => i.group === groupName).map(i => i.term);
+            masteredList = masteredList.filter(t => !termsInGroup.includes(t));
+            localStorage.setItem('mastered_idioms', JSON.stringify(masteredList));
+            initProgress();
         }
-        
-        // 绑定按钮点击防止冒泡（因为它们在 .controls 里，而 .controls 在 body 上可能不需要阻止，但保险起见）
-        document.querySelector('.controls').addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
 
+        window.onload = init;
     </script>
 </body>
 </html>
