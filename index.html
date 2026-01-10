@@ -3,74 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>公考成语刷题 - 专业版</title>
+    <title>公考成语刷题 - 进阶版</title>
     
     <script src="data.js"></script>
 
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f0f2f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f2f3f5;
             margin: 0;
             display: flex;
             flex-direction: column;
             height: 100vh;
             color: #333;
-            overflow: hidden;
+            overflow: hidden; /* 防止body滚动 */
         }
 
-        /* 顶部栏 */
+        /* --- 顶部导航栏 --- */
         .header {
-            padding: 10px 15px;
+            padding: 8px 12px;
             background: #fff;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 100;
+            height: 50px;
+            flex-shrink: 0;
         }
-        .header-title { font-weight: bold; font-size: 16px; }
+        .app-title {
+            font-weight: 700;
+            font-size: 16px;
+            color: #222;
+        }
+        .header-controls {
+            display: flex;
+            gap: 10px;
+        }
         select {
-            padding: 6px 10px;
-            border-radius: 8px;
+            padding: 4px 8px;
+            border-radius: 6px;
             border: 1px solid #ddd;
-            font-size: 14px;
-            outline: none;
+            font-size: 13px;
+            background: #f9f9f9;
+            max-width: 120px;
+        }
+        .btn-review {
+            padding: 4px 10px;
+            background: #eaf2ff;
+            color: #007aff;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
         }
 
-        /* 主容器 */
+        /* --- 主容器 (紧凑版) --- */
         .container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 10px; /* 减少内边距 */
+            position: relative;
+            justify-content: flex-start; /* 改为从上往下布局，防止中间留白过多 */
+            padding-top: 20px;
         }
 
+        /* --- 状态提示 --- */
         .status-bar {
-            margin-bottom: 15px;
-            font-size: 14px;
-            color: #888;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #666;
             background: #fff;
             padding: 4px 12px;
-            border-radius: 20px;
+            border-radius: 15px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
-        /* 抽认卡容器 */
+        /* --- 卡片容器 (高度优化) --- */
         .card-container {
             width: 100%;
-            max-width: 360px;
-            height: 480px;
+            max-width: 340px;
+            /* 使用视口高度计算，保证在不同手机上都合适，减去头部和底部预留空间 */
+            height: calc(100vh - 180px); 
+            max-height: 420px; /* 限制最大高度，防止在大屏太长 */
+            min-height: 320px;
             perspective: 1000px;
             cursor: pointer;
+            margin-bottom: 10px;
         }
         .card {
             width: 100%;
             height: 100%;
             position: relative;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.4s;
             transform-style: preserve-3d;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
         .card.is-flipped {
             transform: rotateY(180deg);
@@ -82,274 +114,496 @@
             backface-visibility: hidden;
             display: flex;
             flex-direction: column;
-            padding: 30px;
+            padding: 20px; /* 稍微减少padding */
             box-sizing: border-box;
-            border-radius: 24px;
-            background: white;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
-            border: 1px solid rgba(0,0,0,0.03);
+            border-radius: 16px;
         }
         
-        /* 正面 */
+        /* --- 正面布局 --- */
         .card-front {
+            background-color: #fff;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
-        }
-        .group-tag {
-            position: absolute;
-            top: 25px;
-            padding: 5px 15px;
-            background: #eef2f6;
-            color: #555;
-            border-radius: 50px;
-            font-size: 13px;
-            font-weight: 500;
         }
         .term {
-            font-size: 42px;
-            font-weight: bold;
-            color: #1a1a1a;
-            letter-spacing: 2px;
+            font-size: 34px; /* 字体稍微调小一点点 */
+            font-weight: 800;
+            color: #2c3e50;
+            margin-bottom: 10px;
             text-align: center;
+            line-height: 1.2;
         }
-        .flip-hint {
-            position: absolute;
-            bottom: 30px;
+        .hint {
             font-size: 13px;
-            color: #ccc;
+            color: #999;
+            margin-top: 15px;
+            background: #f5f5f5;
+            padding: 4px 10px;
+            border-radius: 12px;
         }
 
-        /* 背面 */
+        /* --- 背面布局 --- */
         .card-back {
+            background-color: #fff; /* 改为纯白看起来更干净 */
             transform: rotateY(180deg);
             overflow-y: auto;
-            background: #fff;
+            align-items: flex-start;
+        }
+        /* 隐藏背面滚动条但保留功能 */
+        .card-back::-webkit-scrollbar { width: 0; }
+        
+        .group-tag {
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-bottom: 8px;
+            align-self: flex-start;
+            font-weight: bold;
         }
         .label {
-            font-weight: bold;
-            margin-top: 15px;
-            color: #007aff;
+            font-weight: 700;
+            color: #333;
+            margin-top: 8px;
             font-size: 14px;
-            display: flex;
-            align-items: center;
-        }
-        .label::before {
-            content: "";
-            display: inline-block;
-            width: 4px;
-            height: 14px;
-            background: #007aff;
-            margin-right: 6px;
-            border-radius: 2px;
+            border-left: 3px solid #007aff;
+            padding-left: 6px;
+            line-height: 1;
         }
         .content {
-            font-size: 16px;
-            line-height: 1.6;
-            margin: 10px 0;
-            color: #333;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #444;
+            margin: 4px 0 8px 0;
+            text-align: justify;
+        }
+        .example-list {
+            font-size: 13px;
+            color: #555;
+            width: 100%;
         }
         .example-item {
-            font-size: 14px;
-            color: #666;
-            background: #f8f8fa;
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            line-height: 1.5;
+            margin-bottom: 6px;
+            padding: 6px 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #eee;
+            line-height: 1.4;
         }
 
-        /* 底部按钮栏 - 两面通用 */
+        /* --- 底部控制栏 --- */
         .controls {
-            padding: 20px 25px 40px;
+            padding: 10px 20px;
             width: 100%;
-            max-width: 400px;
+            max-width: 340px;
             display: flex;
             justify-content: space-between;
-            gap: 20px;
-            box-sizing: border-box;
+            gap: 12px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            margin-top: auto; /* 自动推到底部 */
+            margin-bottom: 20px;
         }
+        .controls.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
         .btn {
             flex: 1;
-            padding: 16px 0;
+            padding: 12px 0;
             border: none;
-            border-radius: 18px;
-            font-size: 18px;
-            font-weight: bold;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
             color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: all 0.2s;
+            text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            line-height: 1.2;
         }
-        .btn:active { transform: translateY(2px); box-shadow: none; }
-        .btn-sub { font-size: 11px; opacity: 0.8; font-weight: normal; margin-top: 2px; }
+        .btn span { font-size: 11px; opacity: 0.85; font-weight: normal; }
+        
+        .btn-fuzzy { background: linear-gradient(135deg, #ffbc00, #ff9500); }
+        .btn-master { background: linear-gradient(135deg, #34c759, #30b04f); }
+        .btn:active { transform: scale(0.97); }
 
-        .btn-master { background: #34c759; } /* 掌握-绿 */
-        .btn-fuzzy { background: #ff9500; }   /* 模糊-橙 */
+        /* --- 完成状态 --- */
+        .empty-state {
+            display: none;
+            text-align: center;
+            color: #888;
+            margin-top: 50px;
+        }
+        .empty-state h3 { color: #333; margin-bottom: 10px; }
 
-        /* 完成状态 */
-        .empty-state { display: none; text-align: center; padding: 40px; }
-        .empty-state h2 { color: #1a1a1a; }
-        .btn-reset {
-            background: #007aff;
-            color: white;
-            padding: 12px 30px;
-            border-radius: 12px;
+        /* --- 已斩词库面板 (覆盖层) --- */
+        .review-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #f5f5f7;
+            z-index: 200;
+            transform: translateY(100%); /* 默认隐藏在底部 */
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            display: flex;
+            flex-direction: column;
+        }
+        .review-panel.open {
+            transform: translateY(0);
+        }
+        .review-header {
+            background: #fff;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            font-weight: bold;
+        }
+        .close-btn {
+            background: none;
             border: none;
-            font-size: 16px;
-            margin-top: 20px;
+            color: #007aff;
+            font-size: 15px;
+            cursor: pointer;
+            padding: 5px;
         }
+        .review-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        
+        /* 词库列表样式 */
+        .review-group-title {
+            font-size: 12px;
+            color: #888;
+            margin: 15px 0 5px 5px;
+            font-weight: bold;
+        }
+        .review-list {
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .review-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .review-item:last-child { border-bottom: none; }
+        .review-term {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        .restore-btn {
+            background: #f5f5f5;
+            color: #888;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .restore-btn:hover { background: #e0e0e0; color: #333; }
+
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="header-title">考公成语抽认卡</div>
-        <select id="group-select" onchange="loadGroup()"></select>
+        <div class="app-title">📜 公考成语</div>
+        <div class="header-controls">
+            <select id="group-select" onchange="changeGroup()">
+                <option value="">加载中...</option>
+            </select>
+            <button class="btn-review" onclick="toggleReviewPanel(true)">🏆 已斩库</button>
+        </div>
     </div>
 
     <div class="container">
-        <div class="status-bar" id="progress-info">正在加载...</div>
+        <div class="status-bar" id="progress-text">本组剩余: 0</div>
 
         <div class="card-container" onclick="flipCard()">
             <div class="card" id="flashcard">
                 <div class="card-face card-front">
-                    <div class="group-tag" id="f-group">分组名</div>
-                    <div class="term" id="f-term">...</div>
-                    <div class="flip-hint">点击卡片翻转 ↺</div>
+                    <div class="term" id="term-text">...</div>
+                    <div class="hint">点击查看释义</div>
                 </div>
                 <div class="card-face card-back">
-                    <div class="label">释义</div>
-                    <div class="content" id="b-def">...</div>
-                    <div class="label">真题例句</div>
-                    <div id="b-examples"></div>
+                    <div class="group-tag" id="group-text">...</div>
+                    
+                    <div class="label">【解释】</div>
+                    <div class="content" id="def-text">...</div>
+                    
+                    <div class="label">【真题例句】</div>
+                    <div class="example-list" id="ex-list"></div>
                 </div>
             </div>
         </div>
 
-        <div class="empty-state" id="empty-box">
-            <h2>🎉 斩完啦！</h2>
-            <p>这一组的成语已全部掌握</p>
-            <button class="btn-reset" onclick="resetGroup()">重置本组进度</button>
+        <div class="empty-state" id="empty-msg">
+            <h3>🎉 本组已全部掌握！</h3>
+            <p>去看看其他组，或者在“已斩库”里温习。</p>
+        </div>
+
+        <div class="controls" id="control-bar">
+            <button class="btn btn-fuzzy" onclick="markFuzzy()">
+                😵 模糊<br><span>再看一遍</span>
+            </button>
+            <button class="btn btn-master" onclick="markMastered()">
+                😎 掌握<br><span>移入已斩</span>
+            </button>
         </div>
     </div>
 
-    <div class="controls" id="btn-bar">
-        <button class="btn btn-master" onclick="doAction('master')">
-            掌握
-            <span class="btn-sub">移入已斩</span>
-        </button>
-        <button class="btn btn-fuzzy" onclick="doAction('fuzzy')">
-            模糊
-            <span class="btn-sub">排到队尾</span>
-        </button>
+    <div class="review-panel" id="review-panel">
+        <div class="review-header">
+            <span>已掌握词库 (<span id="total-mastered-count">0</span>)</span>
+            <button class="close-btn" onclick="toggleReviewPanel(false)">关闭</button>
+        </div>
+        <div class="review-content" id="review-content">
+            <div style="text-align:center;color:#999;margin-top:50px;">暂无已掌握的成语</div>
+        </div>
     </div>
 
     <script>
-        let queue = []; // 学习队列
-        let masteredSet = new Set(JSON.parse(localStorage.getItem('mastered_records') || '[]'));
+        // --- 音效数据 (Base64) ---
+        // 一个短促、清脆的提示音
+        const SUCCESS_AUDIO_SRC = "data:audio/mp3;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAGDgYtAgAyN+QWaAAihwMWm4G8QQRDiMcCBcH3Cc+CDv/7cQBCNJxhDB9//pgPT//7mFFEfYkHAbed//ta//+iwMpXrPZavFk//uQZPAAA1ynCORzNYQlJSUDWIHVXDVpvrTkcAFNgq5p1ZsAABPP4mKdRzg4KVElk8ebdJ674V1BY+HWWscnk8X6tWcMcgnnbXlKiVHPS94qBx5rJ2L2dZ//uQZPgABG1W070ZgACUGCuiylkAAcoU8lFWKAAXGWoqbrFwAAJ/E4n/7kGQAAP8AAAAABAAA";
+        const successAudio = new Audio(SUCCESS_AUDIO_SRC);
+        successAudio.volume = 0.5;
 
-        // 初始化
-        function init() {
+        // --- 1. 数据准备 ---
+        const allIdioms = window.idioms || [];
+        let masteredSet = new Set(JSON.parse(localStorage.getItem('mastered_idioms') || '[]'));
+        
+        let currentGroup = "";
+        let todoList = [];
+        let currentCardIndex = 0;
+
+        // --- 2. 初始化 ---
+        window.onload = function() {
+            if (allIdioms.length === 0) {
+                alert("未读取到数据，请检查 data.js");
+                return;
+            }
+            initGroupSelect();
+            updateMasteredCount();
+        };
+
+        function initGroupSelect() {
             const select = document.getElementById('group-select');
-            const groups = [...new Set(window.idioms.map(i => i.group))];
+            select.innerHTML = "";
+            const groups = [...new Set(allIdioms.map(item => item.group))];
             
             groups.forEach(g => {
-                const el = document.createElement('option');
-                el.value = g; el.innerText = g;
-                select.appendChild(el);
+                const option = document.createElement('option');
+                option.value = g;
+                option.text = g;
+                select.appendChild(option);
             });
 
-            // 恢复上次选择的分组
-            const savedG = localStorage.getItem('last_group');
-            if (savedG && groups.includes(savedG)) select.value = savedG;
-
-            loadGroup();
+            const lastGroup = localStorage.getItem('last_selected_group');
+            if (lastGroup && groups.includes(lastGroup)) {
+                select.value = lastGroup;
+            } else {
+                select.value = groups[0];
+            }
+            changeGroup();
         }
 
-        // 加载分组数据
-        function loadGroup() {
-            const gName = document.getElementById('group-select').value;
-            localStorage.setItem('last_group', gName);
+        // --- 3. 核心逻辑：切换分组 ---
+        function changeGroup() {
+            const select = document.getElementById('group-select');
+            currentGroup = select.value;
+            localStorage.setItem('last_selected_group', currentGroup);
 
-            // 过滤：本组 + 未掌握
-            queue = window.idioms.filter(i => i.group === gName && !masteredSet.has(i.term));
-            
-            // 洗牌（可选）：queue.sort(() => Math.random() - 0.5);
+            // 过滤：当前组且未掌握
+            todoList = allIdioms.filter(item => {
+                return item.group === currentGroup && !masteredSet.has(item.term);
+            });
 
-            updateUI();
+            currentCardIndex = 0;
+            renderCard();
         }
 
-        // 更新界面
-        function updateUI() {
+        // --- 4. 渲染卡片 ---
+        function renderCard() {
             const card = document.getElementById('flashcard');
-            const btnBar = document.getElementById('btn-bar');
-            const emptyBox = document.getElementById('empty-box');
+            const controls = document.getElementById('control-bar');
             const cardContainer = document.querySelector('.card-container');
+            const emptyMsg = document.getElementById('empty-msg');
 
+            // 状态重置
             card.classList.remove('is-flipped');
+            controls.classList.remove('visible');
 
-            if (queue.length === 0) {
+            if (todoList.length === 0) {
                 cardContainer.style.display = 'none';
-                btnBar.style.display = 'none';
-                emptyBox.style.display = 'block';
-                document.getElementById('progress-info').innerText = "已完成";
+                emptyMsg.style.display = 'block';
+                controls.style.display = 'none'; // 隐藏底部按钮
+                document.getElementById('progress-text').innerText = `本组剩余: 0`;
                 return;
             }
 
+            // 显示
             cardContainer.style.display = 'block';
-            btnBar.style.display = 'flex';
-            emptyBox.style.display = 'none';
+            emptyMsg.style.display = 'none';
+            controls.style.display = 'flex';
 
-            const cur = queue[0];
-            document.getElementById('f-term').innerText = cur.term;
-            document.getElementById('f-group').innerText = cur.group;
-            document.getElementById('b-def').innerText = cur.definition;
-            document.getElementById('progress-info').innerText = `本组待学：${queue.length} 个`;
+            if (currentCardIndex >= todoList.length) currentCardIndex = 0;
 
-            const exHtml = cur.examples.map(e => `<div class="example-item">${e}</div>`).join('');
-            document.getElementById('b-examples').innerHTML = exHtml || '<div style="color:#ccc">暂无例句</div>';
-        }
-
-        // 翻转逻辑
-        function flipCard() {
-            document.getElementById('flashcard').classList.toggle('is-flipped');
-        }
-
-        // 按钮动作
-        function doAction(type) {
-            event.stopPropagation(); // 阻止触发卡片点击
-
-            const currentItem = queue.shift(); // 移除队首
-
-            if (type === 'master') {
-                // 掌握：存入记录
-                masteredSet.add(currentItem.term);
-                localStorage.setItem('mastered_records', JSON.stringify([...masteredSet]));
+            const data = todoList[currentCardIndex];
+            
+            document.getElementById('term-text').innerText = data.term;
+            document.getElementById('group-text').innerText = data.group;
+            document.getElementById('def-text').innerText = data.definition;
+            
+            const exList = document.getElementById('ex-list');
+            exList.innerHTML = '';
+            if (data.examples && data.examples.length > 0) {
+                data.examples.forEach(ex => {
+                    const div = document.createElement('div');
+                    div.className = 'example-item';
+                    div.innerHTML = ex.replace(data.term, `<b>${data.term}</b>`); // 高亮例句中的词
+                    exList.appendChild(div);
+                });
             } else {
-                // 模糊：放到队尾实现反复出现
-                queue.push(currentItem);
+                exList.innerHTML = '<div style="padding:5px;color:#ccc;font-size:12px">暂无例句</div>';
             }
 
-            updateUI();
+            document.getElementById('progress-text').innerText = `本组: ${todoList.length} 待学`;
         }
 
-        // 重置
-        function resetGroup() {
-            const gName = document.getElementById('group-select').value;
-            const termsInGroup = window.idioms.filter(i => i.group === gName).map(i => i.term);
-            
-            termsInGroup.forEach(t => masteredSet.delete(t));
-            localStorage.setItem('mastered_records', JSON.stringify([...masteredSet]));
-            
-            loadGroup();
+        // --- 5. 交互操作 ---
+        function flipCard() {
+            const card = document.getElementById('flashcard');
+            const controls = document.getElementById('control-bar');
+            if (!card.classList.contains('is-flipped')) {
+                card.classList.add('is-flipped');
+                controls.classList.add('visible');
+            }
         }
 
-        window.onload = init;
+        function markFuzzy() {
+            event.stopPropagation(); 
+            // 简单切到下一张
+            currentCardIndex++;
+            renderCard();
+        }
+
+        function markMastered() {
+            event.stopPropagation();
+            
+            // 播放音效 (克隆节点以允许快速连续播放)
+            successAudio.cloneNode(true).play().catch(e => console.log('Audio play failed', e));
+
+            const data = todoList[currentCardIndex];
+            masteredSet.add(data.term);
+            saveMastered();
+            
+            todoList.splice(currentCardIndex, 1);
+            updateMasteredCount();
+            renderCard();
+        }
+
+        function saveMastered() {
+            localStorage.setItem('mastered_idioms', JSON.stringify([...masteredSet]));
+        }
+
+        function updateMasteredCount() {
+            document.getElementById('total-mastered-count').innerText = masteredSet.size;
+        }
+
+        // --- 6. 已斩词库逻辑 ---
+
+        // 打开/关闭面板
+        function toggleReviewPanel(show) {
+            const panel = document.getElementById('review-panel');
+            if (show) {
+                renderReviewList(); // 打开时实时渲染
+                panel.classList.add('open');
+            } else {
+                panel.classList.remove('open');
+            }
+        }
+
+        // 渲染已掌握列表（带分组）
+        function renderReviewList() {
+            const container = document.getElementById('review-content');
+            if (masteredSet.size === 0) {
+                container.innerHTML = '<div style="text-align:center;color:#999;margin-top:50px;">暂无已掌握的成语<br>快去刷题吧！</div>';
+                return;
+            }
+
+            // 按组整理数据
+            const groupsMap = {};
+            // 保持 data.js 里的原始顺序
+            allIdioms.forEach(item => {
+                if (masteredSet.has(item.term)) {
+                    if (!groupsMap[item.group]) groupsMap[item.group] = [];
+                    groupsMap[item.group].push(item);
+                }
+            });
+
+            let html = '';
+            for (const groupName in groupsMap) {
+                html += `<div class="review-group-title">${groupName}</div>`;
+                html += `<div class="review-list">`;
+                groupsMap[groupName].forEach(item => {
+                    html += `
+                        <div class="review-item">
+                            <span class="review-term">${item.term}</span>
+                            <button class="restore-btn" onclick="restoreTerm('${item.term}')">
+                                遗忘
+                            </button>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            container.innerHTML = html;
+        }
+
+        // 将词语移出已斩（恢复到待学）
+        function restoreTerm(term) {
+            if (!confirm(`确定要将“${term}”移出已斩库，重新学习吗？`)) return;
+
+            masteredSet.delete(term);
+            saveMastered();
+            updateMasteredCount();
+            
+            // 重新渲染当前列表
+            renderReviewList();
+            
+            // 如果当前正好在看这个组，立即刷新主界面的 todoList
+            const item = allIdioms.find(i => i.term === term);
+            if (item && item.group === currentGroup) {
+                // 重新获取一下列表即可
+                changeGroup(); 
+            }
+        }
+        
+        // 绑定底部点击防止冒泡
+        document.querySelector('.controls').addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
     </script>
 </body>
 </html>
