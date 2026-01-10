@@ -36,21 +36,43 @@
             font-size: 18px;
             color: #333;
         }
-        /* 右上角区域容器 */
         .header-right {
             display: flex;
             align-items: center;
+            overflow: hidden;
         }
-        /* 新增：右上角组名显示 */
         .header-group-tag {
             font-size: 13px;
             color: #007aff;
             background: rgba(0,122,255,0.1);
             padding: 4px 8px;
             border-radius: 4px;
-            margin-right: 10px;
-            font-weight: 500;
+            margin-right: 8px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px; /* 稍微调宽一点以容纳长标题 */
         }
+        
+        /* 赞助按钮 */
+        .sponsor-btn {
+            font-size: 13px;
+            color: #ff4757;
+            background: rgba(255, 71, 87, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-right: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .sponsor-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 71, 87, 0.2);
+        }
+
         .stats {
             font-size: 14px;
             color: #666;
@@ -58,6 +80,7 @@
             padding: 4px 10px;
             border-radius: 12px;
             cursor: pointer;
+            white-space: nowrap;
         }
 
         /* 主体卡片区域 */
@@ -68,7 +91,7 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            perspective: 1000px; /* 3D透视 */
+            perspective: 1000px;
         }
 
         /* 翻转卡片容器 */
@@ -78,11 +101,9 @@
             height: 420px;
             position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.4s ease; /* 翻转动画时间 */
+            transition: transform 0.4s ease;
             cursor: pointer;
         }
-
-        /* 翻转状态 */
         .card-container.flipped {
             transform: rotateY(180deg);
         }
@@ -92,7 +113,7 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            backface-visibility: hidden; /* 背面不可见 */
+            backface-visibility: hidden;
             background: #fff;
             border-radius: 16px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -105,51 +126,19 @@
             text-align: center;
         }
 
-        /* 正面 */
-        .card-front {
-            z-index: 2;
-        }
-        /* 背面 */
+        .card-front { z-index: 2; }
         .card-back {
             transform: rotateY(180deg);
-            justify-content: flex-start; /* 背面内容从上往下 */
+            justify-content: flex-start;
             padding-top: 40px;
             overflow-y: auto;
         }
 
-        /* 内容样式 */
-        .term-text {
-            font-size: 32px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        .group-tag {
-            font-size: 12px;
-            color: #999;
-            margin-bottom: 20px;
-        }
-        .definition-text {
-            font-size: 18px;
-            line-height: 1.6;
-            color: #444;
-            margin-bottom: 20px;
-            font-weight: 500;
-            text-align: justify;
-        }
-        .examples-box {
-            width: 100%;
-            text-align: left;
-            background: #f9f9f9;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 14px;
-            color: #666;
-        }
-        .examples-box div {
-            margin-bottom: 8px;
-            line-height: 1.5;
-        }
+        .term-text { font-size: 32px; font-weight: bold; color: #333; margin-bottom: 10px; }
+        .group-tag { font-size: 14px; color: #007aff; margin-bottom: 20px; font-weight: 500; }
+        .definition-text { font-size: 18px; line-height: 1.6; color: #444; margin-bottom: 20px; font-weight: 500; text-align: justify; }
+        .examples-box { width: 100%; text-align: left; background: #f9f9f9; padding: 10px; border-radius: 8px; font-size: 14px; color: #666; }
+        .examples-box div { margin-bottom: 8px; line-height: 1.5; }
 
         /* 底部控制区 */
         .controls {
@@ -175,21 +164,10 @@
             justify-content: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        .btn-kill {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-        }
-        .btn-kill:active {
-            background-color: #c8e6c9;
-            transform: scale(0.96);
-        }
-        .btn-next {
-            background-color: #333;
-            color: #fff;
-        }
-        .btn-next:active {
-            transform: scale(0.96);
-        }
+        .btn-kill { background-color: #e8f5e9; color: #2e7d32; }
+        .btn-kill:active { background-color: #c8e6c9; transform: scale(0.96); }
+        .btn-next { background-color: #333; color: #fff; }
+        .btn-next:active { transform: scale(0.96); }
 
         /* 组选择器浮层 */
         .group-selector {
@@ -207,15 +185,9 @@
             z-index: 50;
             backdrop-filter: blur(5px);
         }
-        select {
-            padding: 5px;
-            font-size: 14px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            outline: none;
-        }
+        select { padding: 5px; font-size: 14px; border: 1px solid #ddd; border-radius: 4px; outline: none; max-width: 220px; }
 
-        /* 已斩列表弹窗 */
+        /* 弹窗通用 */
         .modal {
             display: none;
             position: fixed;
@@ -231,12 +203,12 @@
         .modal-content {
             width: 90%;
             max-width: 400px;
-            height: 80%;
             background: #fff;
             border-radius: 12px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            max-height: 80%;
         }
         .modal-header {
             padding: 15px;
@@ -246,50 +218,50 @@
             align-items: center;
             font-weight: bold;
         }
-        .close-btn {
-            font-size: 24px;
-            cursor: pointer;
-            color: #999;
-        }
-        .review-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 0;
-        }
-        .review-group-title {
-            background: #f2f2f2;
-            padding: 8px 15px;
-            font-size: 12px;
-            color: #666;
-            font-weight: bold;
-        }
-        .review-item {
-            padding: 12px 15px;
-            border-bottom: 1px solid #f9f9f9;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .review-term {
-            font-size: 16px;
-            font-weight: 500;
-        }
-        .restore-btn {
-            background: #fff0f0;
-            color: #d32f2f;
-            border: none;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-        }
+        .close-btn { font-size: 24px; cursor: pointer; color: #999; }
+        
+        .review-list { flex: 1; overflow-y: auto; padding: 0; }
+        .review-group-title { background: #f2f2f2; padding: 8px 15px; font-size: 12px; color: #666; font-weight: bold; }
+        .review-item { padding: 12px 15px; border-bottom: 1px solid #f9f9f9; display: flex; justify-content: space-between; align-items: center; }
+        .review-term { font-size: 16px; font-weight: 500; }
+        .restore-btn { background: #fff0f0; color: #d32f2f; border: none; padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
 
-        /* 空状态 */
-        .empty-state {
-            color: #999;
-            margin-top: 100px;
+        /* 赞助弹窗内容 */
+        .sponsor-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
             text-align: center;
         }
+        .sponsor-text {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        .qr-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .qr-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .qr-img {
+            width: 130px;
+            height: 130px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            margin-bottom: 8px;
+            object-fit: contain;
+            background: #f9f9f9;
+        }
+        .qr-label { font-size: 14px; color: #333; }
+        .empty-state { color: #999; margin-top: 100px; text-align: center; }
     </style>
 </head>
 <body>
@@ -298,6 +270,9 @@
         <div class="app-title">公考成语</div>
         <div class="header-right">
             <span id="headerGroupDisplay" class="header-group-tag">第一组</span>
+            
+            <span class="sponsor-btn" onclick="showSponsor()">❤️ 支持</span>
+
             <div class="stats" onclick="showMasteredList()">
                 <span id="masteredCount">已斩 0</span> / <span id="totalCount">...</span>
             </div>
@@ -311,7 +286,6 @@
                 <div class="group-tag" id="groupDisplay">请选择章节</div>
                 <div style="color:#ccc; font-size:12px; margin-top:20px;">(点击查看解释)</div>
             </div>
-
             <div class="card-face card-back">
                 <div class="term-text" id="backTermDisplay" style="font-size: 24px;"></div>
                 <div class="definition-text" id="definitionDisplay"></div>
@@ -340,7 +314,7 @@
     </div>
 
     <div id="masteredModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="height: 80%;">
             <div class="modal-header">
                 <span>已斩杀成语 (<span id="modalCount">0</span>)</span>
                 <span class="close-btn" onclick="closeMasteredList()">×</span>
@@ -349,17 +323,134 @@
         </div>
     </div>
 
-    <script>
-        // 全局变量
-        let allIdioms = []; // 所有成语数据
-        let currentGroup = "";
-        let todoList = []; // 当前组待学习列表
-        let currentIndex = 0;
-        let masteredSet = new Set(); // 已斩杀集合（存term）
+    <div id="sponsorModal" class="modal">
+        <div class="modal-content" style="height: auto; padding-bottom: 20px;">
+            <div class="modal-header">
+                <span>支持开发者 ☕</span>
+                <span class="close-btn" onclick="closeSponsor()">×</span>
+            </div>
+            <div class="sponsor-content">
+                <div class="sponsor-text">
+                    如果这个小程序对你的备考有帮助，<br>
+                    欢迎请开发者喝杯咖啡，鼓励持续更新！
+                </div>
+                <div class="qr-container">
+                    <div class="qr-item">
+                        <img src="wechat_pay.png" alt="微信支付" class="qr-img">
+                        <span class="qr-label">微信支付</span>
+                    </div>
+                    <div class="qr-item">
+                        <img src="alipay.png" alt="支付宝" class="qr-img">
+                        <span class="qr-label">支付宝</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        // 初始化
+    <script>
+        // --- 核心数据配置 ---
+        let allIdioms = [];
+        let currentGroup = "";
+        let todoList = [];
+        let currentIndex = 0;
+        let masteredSet = new Set();
+
+        // 【完整组名映射表】包含标题和数目
+        const groupTitles = {
+            // 上册 (1-40)
+            "第一组": "中华文明传统文化 (5个)",
+            "第二组": "文化传承 (10个)",
+            "第三组": "改革创新 (7个)",
+            "第四组": "做法、构思创新 (11个)",
+            "第五组": "守旧不创新 (5个)",
+            "第六组": "按规矩办事 (6个)",
+            "第七组": "处境困难 (11个)",
+            "第八组": "形势危险 (5个)",
+            "第九组": "事物出现、发展、衰落 (22个)",
+            "第十组": "竞争比较 (12个)",
+            "第十一组": "能力不足 (10个)",
+            "第十二组": "印象和效果 (9个)",
+            "第十三组": "搭档配合 (8个)",
+            "第十四组": "工作开展顺序 (4个)",
+            "第十五组": "错误抉择和方向 (9个)",
+            "第十六组": "错误做法(寓言故事) (10个)",
+            "第十七组": "教育影响批评 (13个)",
+            "第十八组": "工作学习状态 (22个)",
+            "第十九组": "正确做法 (13个)",
+            "第二十组": "错误做法 (10个)",
+            "第二十一组": "某些国家的错误做法 (16个)",
+            "第二十二组": "国家安定与动荡 (7个)",
+            "第二十三组": "国际国内关系 (15个)",
+            "第二十四组": "政府优秀做法 (10个)",
+            "第二十五组": "合理规划 (4个)",
+            "第二十六组": "政策措施的评价 (8个)",
+            "第二十七组": "成功与失败 (11个)",
+            "第二十八组": "领导力 (14个)",
+            "第二十九组": "正义精神和做法 (9个)",
+            "第三十组": "干部易犯错误 (22个)",
+            "第三十一组": "对待错误的态度 (12个)",
+            "第三十二组": "改变与不变 (18个)",
+            "第三十三组": "顺势造势 (7个)",
+            "第三十四组": "自然会发生 (5个)",
+            "第三十五组": "提早准备和补救 (10个)",
+            "第三十六组": "办公、管理相关 (6个)",
+            "第三十七组": "空谈与虚幻 (8个)",
+            "第三十八组": "来者众多 (13个)",
+            "第三十九组": "人多人少 (9个)",
+            "第四十组": "好坏掺杂 (7个)",
+
+            // 下册成语 (41-66)
+            "第四十一组": "流行与名声 (13个)",
+            "第四十二组": "与传播、传闻相关 (10个)",
+            "第四十三组": "与消失、重现相关 (13个)",
+            "第四十四组": "明显、含糊相关 (12个)",
+            "第四十五组": "重视、重要相关 (17个)",
+            "第四十六组": "熟悉、了解、知晓相关 (13个)",
+            "第四十七组": "很常见不奇怪 (7个)",
+            "第四十八组": "看法一致与否 (11个)",
+            "第四十九组": "从细节看全貌 (9个)",
+            "第五十组": "看事情透彻 (11个)",
+            "第五十一组": "对事情的态度与评价 (7个)",
+            "第五十二组": "数量多与少 (13个)",
+            "第五十三组": "建筑相关 (6个)",
+            "第五十四组": "相同与不同 (13个)",
+            "第五十五组": "技艺精湛 (7个)",
+            "第五十六组": "与观看欣赏相关 (10个)",
+            "第五十七组": "“说”相关 (16个)",
+            "第五十八组": "“演”相关 (6个)",
+            "第五十九组": "“听”相关 (7个)",
+            "第六十组": "“写”相关 (12个)",
+            "第六十一组": "“钱”相关 (9个)",
+            "第六十二组": "“心态”相关 (11个)",
+            "第六十三组": "顾忌和无所顾忌 (6个)",
+            "第六十四组": "调查相关 (5个)",
+            "第六十五组": "自我评价不当 (7个)",
+            "第六十六组": "近似成语 (24个)",
+
+            // 实词 (67-77) - 已添加“实词、”和数目
+            "第六十七组": "实词、“雕刻”和“绘画” (7个)",
+            "第六十八组": "实词、集中到一起 (6个)",
+            "第六十九组": "实词、表明两者关系 (13个)",
+            "第七十组": "实词、对外界的反映 (10个)",
+            "第七十一组": "实词、两者融合 (7个)",
+            "第七十二组": "实词、作用下的结果 (10个)",
+            "第七十三组": "实词、动作 (12个)",
+            "第七十四组": "实词、事物变化 (10个)",
+            "第七十五组": "实词、表示包容 (6个)",
+            "第七十六组": "实词、事情不顺利 (13个)",
+            "第七十七组": "实词、需要积累的其他词语 (23个)"
+        };
+
+        function getFullGroupName(groupName) {
+            const cleanName = groupName.trim();
+            if (groupTitles[cleanName]) {
+                return `${cleanName} ${groupTitles[cleanName]}`;
+            }
+            return cleanName;
+        }
+
         window.onload = function() {
-            // 1. 加载数据
             if (typeof data !== 'undefined') {
                 allIdioms = data;
             } else if (window.idioms) {
@@ -369,71 +460,62 @@
                 return;
             }
 
-            // 2. 读取本地存储的已斩记录
             const saved = localStorage.getItem('masteredIdioms');
             if (saved) {
                 masteredSet = new Set(JSON.parse(saved));
             }
             updateMasteredCount();
-
-            // 3. 初始化下拉框
             initGroupSelect();
-
-            // 4. 默认加载第一组
             changeGroup();
             
-            // 绑定卡片点击翻转
             const card = document.getElementById('card');
             card.addEventListener('click', () => {
-                // 修改2：使用 toggle 实现翻过去还能翻回来
                 card.classList.toggle('flipped');
             });
         };
 
-        // 初始化组选择器
         function initGroupSelect() {
             const select = document.getElementById('groupSelect');
-            // 提取所有不重复的组名
             const groups = [...new Set(allIdioms.map(item => item.group))];
             
-            // 简单排序：尝试按中文数字排序（这里简单按字符串顺序，如果需要精确排序需额外逻辑）
-            // 这里不做复杂排序，直接按数据里的顺序
-            
+            const chineseToNum = (cn) => {
+                const map = {'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9,'十':10,'百':100,'零':0};
+                if(cn.startsWith('十')) return 10 + (map[cn[1]]||0);
+                if(cn.length===2 && cn[1]==='十') return map[cn[0]]*10;
+                if(cn.length===3 && cn[1]==='十') return map[cn[0]]*10 + map[cn[2]];
+                return map[cn] || 0;
+            };
+            const parseGroupNum = (str) => {
+                const match = str.match(/第([一二三四五六七八九十百]+)组/);
+                if(match) return chineseToNum(match[1]);
+                return 0;
+            };
+
+            groups.sort((a, b) => parseGroupNum(a) - parseGroupNum(b));
+
             groups.forEach(g => {
                 const option = document.createElement('option');
                 option.value = g;
-                option.text = g;
+                option.text = getFullGroupName(g);
                 select.appendChild(option);
             });
 
-            if (groups.length > 0) {
-                select.value = groups[0];
-            }
+            if (groups.length > 0) select.value = groups[0];
         }
 
-        // 切换组
         function changeGroup() {
             const selector = document.getElementById('groupSelect');
             currentGroup = selector.value;
+            document.getElementById('headerGroupDisplay').innerText = getFullGroupName(currentGroup);
             
-            // 修改1：右上角同步显示组名
-            document.getElementById('headerGroupDisplay').innerText = currentGroup;
-
-            // 过滤出当前组 && 未被斩杀的词
-            todoList = allIdioms.filter(item => 
-                item.group === currentGroup && !masteredSet.has(item.term)
-            );
-
+            todoList = allIdioms.filter(item => item.group === currentGroup && !masteredSet.has(item.term));
             currentIndex = 0;
             loadCurrentTerm();
         }
 
-        // 加载当前词
         function loadCurrentTerm() {
             const card = document.getElementById('card');
             const emptyMsg = document.getElementById('emptyMsg');
-
-            // 每次加载新词，先把卡片翻回正面
             card.classList.remove('flipped');
 
             if (todoList.length === 0) {
@@ -444,18 +526,13 @@
 
             card.style.display = 'block';
             emptyMsg.style.display = 'none';
-
             const item = todoList[currentIndex];
             
-            // 正面
             document.getElementById('termDisplay').innerText = item.term;
-            document.getElementById('groupDisplay').innerText = item.group;
-
-            // 背面
+            document.getElementById('groupDisplay').innerText = getFullGroupName(item.group);
             document.getElementById('backTermDisplay').innerText = item.term;
             document.getElementById('definitionDisplay').innerText = item.definition || "暂无解释";
             
-            // 例句处理
             const exBox = document.getElementById('examplesDisplay');
             exBox.innerHTML = "";
             if (item.examples && item.examples.length > 0) {
@@ -469,94 +546,67 @@
             }
         }
 
-        // 下一个
         function nextTerm(e) {
-            e.stopPropagation(); // 防止冒泡触发翻卡
+            e.stopPropagation();
             if (todoList.length === 0) return;
-
-            // 简单轮播：无限循环
             currentIndex = (currentIndex + 1) % todoList.length;
             loadCurrentTerm();
         }
 
-        // 斩杀
         function markAsMastered(e) {
             e.stopPropagation();
             if (todoList.length === 0) return;
-
             const item = todoList[currentIndex];
             masteredSet.add(item.term);
             saveMastered();
             updateMasteredCount();
-
-            // 从当前待办列表移除
             todoList.splice(currentIndex, 1);
-
-            // 索引调整（防止数组越界）
-            if (currentIndex >= todoList.length) {
-                currentIndex = 0;
-            }
-
+            if (currentIndex >= todoList.length) currentIndex = 0;
             loadCurrentTerm();
         }
 
-        // 保存已斩记录
         function saveMastered() {
             localStorage.setItem('masteredIdioms', JSON.stringify([...masteredSet]));
         }
 
-        // 更新计数显示
         function updateMasteredCount() {
             document.getElementById('masteredCount').innerText = `已斩 ${masteredSet.size}`;
             document.getElementById('totalCount').innerText = allIdioms.length;
         }
 
-        // --- 已斩列表相关 ---
-
         function showMasteredList() {
-            const modal = document.getElementById('masteredModal');
-            modal.style.display = 'flex';
+            document.getElementById('masteredModal').style.display = 'flex';
             document.getElementById('modalCount').innerText = masteredSet.size;
             renderReviewList();
         }
-
         function closeMasteredList() {
             document.getElementById('masteredModal').style.display = 'none';
         }
-
         function renderReviewList() {
             const container = document.getElementById('reviewListContainer');
             container.innerHTML = "";
-
             if (masteredSet.size === 0) {
                 container.innerHTML = "<div style='padding:20px;text-align:center;color:#999'>空空如也</div>";
                 return;
             }
-
-            // 按组分类整理已斩词汇
             const groupsMap = {};
-            // 先找出所有被斩杀的完整对象
             const masteredItems = allIdioms.filter(item => masteredSet.has(item.term));
-
             masteredItems.forEach(item => {
-                if (!groupsMap[item.group]) {
-                    groupsMap[item.group] = [];
-                }
+                if (!groupsMap[item.group]) groupsMap[item.group] = [];
                 groupsMap[item.group].push(item);
             });
 
-            // 生成HTML
             let html = "";
-            for (const groupName in groupsMap) {
-                html += `<div class="review-group-title">${groupName}</div>`;
+            const sortedGroups = Object.keys(groupsMap).sort();
+
+            for (const groupName of sortedGroups) {
+                html += `<div class="review-group-title">${getFullGroupName(groupName)}</div>`;
                 html += `<div class="review-list">`;
                 groupsMap[groupName].forEach(item => {
                     html += `
                         <div class="review-item">
                             <span class="review-term">${item.term}</span>
-                            <button class="restore-btn" onclick="restoreTerm('${item.term}')">
-                                遗忘
-                            </button>
+                            <button class="restore-btn" onclick="restoreTerm('${item.term}')">遗忘</button>
                         </div>
                     `;
                 });
@@ -565,30 +615,33 @@
             container.innerHTML = html;
         }
 
-        // 将词语移出已斩（恢复到待学）
         function restoreTerm(term) {
-            // 修改3：移除 confirm 确认框，直接执行删除
-            
             masteredSet.delete(term);
             saveMastered();
             updateMasteredCount();
-            
-            // 重新渲染当前列表
             renderReviewList();
-            
-            // 如果当前正好在看这个组，立即刷新主界面的 todoList
             const item = allIdioms.find(i => i.term === term);
             if (item && item.group === currentGroup) {
-                // 重新获取一下列表即可
                 changeGroup(); 
             }
         }
-        
-        // 绑定底部点击防止冒泡
+
+        function showSponsor() {
+            document.getElementById('sponsorModal').style.display = 'flex';
+        }
+        function closeSponsor() {
+            document.getElementById('sponsorModal').style.display = 'none';
+        }
+
         document.querySelector('.controls').addEventListener('click', (e) => {
             e.stopPropagation();
         });
-
+        
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = "none";
+            }
+        }
     </script>
 </body>
 </html>
